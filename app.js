@@ -42,9 +42,34 @@ async function openLockDraw() {
 
   // 2. Fetch & Display collateral, colla ratio & dai debt of current CDP
 
+  let cdpColla;
   const ethCollateral = await cdp.getCollateralValue()
-  .then(response => {console.log(response['_amount']['c'][0])});
+  .then(response => {
+    cdpColla = response['_amount']['c'][0];
+    
+  });
+  console.log(cdpColla);
+  let cdpCollaEth = cdpColla / 10**14
+  console.log(cdpCollaEth);
+
+  // Colla Ratio
+  let collaRatio;
+  const ratio = await cdp.getCollateralizationRatio()
+  .then(response => {
+    collaRatio = response;
+    console.log(collaRatio)
+  });
+
+  // Dai Debt
+  let daiDebt;
+  const debt = await cdp.getDebtValue()
+  .then(response => {
+    daiDebt = response['_amount']['c'][0] + response['_amount']['c'][1] / 10**14;
+    console.log(daiDebt)
+  });
+
   
+  //console.log(cdpCollaEth);
   // console.log(ethCollateral);
 
 
