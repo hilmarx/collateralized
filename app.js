@@ -68,9 +68,18 @@ async function openLockDraw() {
     console.log(daiDebt)
   });
 
-  
-  //console.log(cdpCollaEth);
-  // console.log(ethCollateral);
+  // 3. Fetch current Maker stability fee and display it
+
+  // The ETH CDP Service exposes the risk parameter information for the Ether CDP type (in single-collateral Dai, this is the only CDP Type)
+
+  const ethCdp = maker.service('cdp');
+
+  // Fetch governance / stability fee
+  const fee = await ethCdp.getAnnualGovernanceFee()
+  .then(result => {
+    console.log(result);
+  })
+
 
 
   // Get Dai Debbt
