@@ -1,3 +1,22 @@
+console.log("hi")
+
+const Maker = require('@makerdao/dai');
+
+console.log(Maker)
+
+
+/*
+Maker.create('http',{
+        privateKey: YOUR_PRIVATE_KEY,
+        url: 'https://kovan.infura.io/v3/YOUR_INFURA_PROJECT_ID'
+    })
+        .then(maker => { window.maker = maker })
+        .then(() => maker.authenticate())
+      .then(() => maker.openCdp())
+      .then(cdp => console.log(cdp.id));
+
+
+
 // ### Variable Definition ###
 
 var web3 = new Web3(Web3.givenProvider);
@@ -110,3 +129,5 @@ function newMetaMaskAddress(error,data) {
 }
 
 web3.currentProvider.publicConfigStore.on('update', newMetaMaskAddress);
+
+*/
