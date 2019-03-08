@@ -15,9 +15,9 @@ console.log("######")
 
 // 4. Fetch current ETHLend lending offers (rate + Maximum amount)
 
-// 5. Display EthLend offers and ask if user wants to refinace loan
+// 5. Display EthLend offers and ask if user wants to refinance loan
 
-// 6. If yes, execute refinancing
+// 6. If yes, show the accrued cost of the Maker CDP => Dai debt plus accrued interest fee
 
 // Ask for CDP ID
 
@@ -68,6 +68,16 @@ async function openLockDraw() {
     console.log(daiDebt)
   });
 
+  // Accrued stability fees
+  // Cant test that right now
+  let accruedFees;
+  const usdFee = await cdp.getGovernanceFee(Maker.USD)
+  .then(result => {
+    //console.log("Accrued Fees:")
+    //console.log(result)
+    accruedFees = result;
+  })
+
   // 3. Fetch current Maker stability fee and display it
 
   // The ETH CDP Service exposes the risk parameter information for the Ether CDP type (in single-collateral Dai, this is the only CDP Type)
@@ -75,9 +85,11 @@ async function openLockDraw() {
   const ethCdp = maker.service('cdp');
 
   // Fetch governance / stability fee
+  let stabilityFee;
   const fee = await ethCdp.getAnnualGovernanceFee()
   .then(result => {
     console.log(result);
+    stabilityFee = result
   })
 
 
