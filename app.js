@@ -1,6 +1,8 @@
-// Declaration
+// Declarations
+// Maker
 const Maker = require('@makerdao/dai');
 require('dotenv').config()
+
 
 console.log("######")
 //console.log(process.env.PRIVATE_KEY)
@@ -92,24 +94,19 @@ async function openLockDraw() {
     stabilityFee = result
   })
 
-
-
-  // Get Dai Debbt
-  // // const daiDebt = await cdp.getDebtValue();
-  // // console.log(daiDebt);
-
-  // lock eth
-  // await cdp.lockEth(0.1);
-
-  // Check collateral balance
-  
-  /*
-  await cdp.drawDai(1);
-
-  const debt = await cdp.getDebtValue();
-  console.log(debt.toString); // '50.00 DAI'
-  */
-
 }
+// openLockDraw();
 
-openLockDraw();
+// ###############################
+// Aaeve
+
+
+//console.log(aaeve);
+//const Marketplace = aaeve.Marketplace
+//console.log(Marketplace)
+
+// 1. Log User In
+
+// 2. Fetch current ETHLend lending offers (rate + Maximum amount)
+
+// 3. Display EthLend offers (if available) and ask if user wants to refinance loan 
