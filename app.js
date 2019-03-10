@@ -1,7 +1,9 @@
 // Maker
 const Maker = require('@makerdao/dai');
+const ethLend = require('./stuff');
 const readline = require('readline');
-// const ethLend = require('./stuff');
+
+let rl = readline.createInterface(process.stdin, process.stdout);
 
 const currentId = 5293
 
@@ -18,10 +20,6 @@ const {
   buildTestService
 } = Maker;
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
 
 // Varbiable Declarations
 let cdp;
@@ -70,17 +68,6 @@ async function setUp() {
 // ##################### Get CDP id ##############
 
 // 1. Ask for users CDP ID
-function getCdpId() {
-  // Prompt User for CDP number:
-  rl.question('What is your CDP id? ', (answer) => {
-    // TODO: Log the answer in a database
-    console.log(`Your CDP id is: ${answer}`);
-    cdpId = answer
-    rl.close();
-  });
-  return answer
-}
-
 
 async function showMakerInfo(id) {
   
@@ -99,6 +86,9 @@ async function showMakerInfo(id) {
 
   cdp = await maker.getCdp(parseInt(id));
 
+  console.log(`-----------------`);
+  console.log(``);
+
   // 2. Fetch & Display collateral, colla ratio & dai debt of current CDP
 
   let cdpColla;
@@ -107,22 +97,21 @@ async function showMakerInfo(id) {
     cdpColla = response.toString()
     
   });
-  console.log(`CDP Collateral Wei: ${cdpColla}`);
+  console.log(`CDP Collateral: ${cdpColla}`);
 
   console.log(`-----------------`);
-
-  let cdpCollaEth = cdpColla / 10**14
-  console.log(`CDP Collateral: ${cdpCollaEth}`);
+  console.log(``);
 
   // Colla Ratio
   let collaRatio;
   const ratio = await cdp.getCollateralizationRatio()
   .then(response => {
     collaRatio = response;
-    console.log(`Collateralization Ratio: ${collaRatio}`);
+    console.log(`Collateralization Ratio: ${collaRatio * 100}%`);
   });
 
   console.log(`-----------------`);
+  console.log(``);
 
   // Dai Debt
   let daiDebt;
@@ -133,6 +122,7 @@ async function showMakerInfo(id) {
   });
 
   console.log(`-----------------`);
+  console.log(``);
 
   // Accrued stability fees
   // Cant test that right now
@@ -143,9 +133,10 @@ async function showMakerInfo(id) {
     //console.log(result)
     accruedFees = result.toString();
   })
-  console.log(`Governance Fees (USD): ${accruedFees}`);
+  console.log(`Governance Fees (USD) outstanding: ${accruedFees}`);
 
   console.log(`-----------------`);
+  console.log(``);
 
   // 3. Fetch current Maker stability fee and display it
 
@@ -158,50 +149,109 @@ async function showMakerInfo(id) {
   const fee = await ethCdp.getAnnualGovernanceFee()
   .then(result => {
     stabilityFee = result
-    console.log(`Maker Stability Fee: ${stabilityFee}`);
   })
 
+  console.log(`You are currently paying: ${stabilityFee * 100}% Interst p.a.`)
   console.log(`-----------------`);
+  console.log(``);
+  rl.question("Would you like to see alternative fixed Interest Rate loans? (y/n) ", function(answer) {
+    if (answer == 'y') {
+      showEthlendLoans();
+    }
+    else {
+      rl.setPrompt("Again")
+      rl.promp()
+    }
+  })
+
 }
 
 // Assuming that the user agreed to refinance their loan to ethlend, require the user to wipe all debt in their cdp
 async function repayCdp() {
-  cdp.shut()
-  console.log("CDP closed")
+  await cdp.shut()
+  console.log("### CDP closed ###")
+  console.log(`-----------------`);
+  console.log(``);
 }
+
+async function showEthlendLoans() {
+  console.log("########################################################")
+  console.log("--------------Here are the available loans-------------")
+  console.log("########################################################")
+  loans = await ethLend.getLoans
+  loan = loans[loans.length - 1]
+  console.log(``);
+  console.log(`Collateral Type: ${loan.collateralType}`)
+  console.log(`-----------------`);
+  console.log(`Collateral Amount: ${loan.collateralAmount}`)
+  console.log(`-----------------`);
+  console.log(`You receive: ${loan.moe}`)
+  console.log(`-----------------`);
+  console.log(`Max to borrow: ${loan.loanAmount}`)
+  console.log(`-----------------`);
+  console.log(``);
+
+  rl.question(`Would you like to refinance to a ${loan.mpr * 12}% p.a. loan? (y/n) `, function(answer) {
+    if (answer == 'y') {
+      console.log(`-----------------`);
+      console.log(``);
+      console.log("### Initiating CDP sale ###")
+      console.log(`-----------------`);
+      console.log(``);
+      repayCdp()
+
+      console.log("### Refinancing to ETHLend platform ###")
+      console.log(`-----------------`);
+      console.log(``);
+      ethLend.initateFunding
+      console.log(`-----------------`);
+      console.log(``);
+      console.log("### Refinancing complete ###")
+    }
+    else {
+      rl.setPrompt("Again")
+      rl.promp()
+    }
+  })
+
+}
+async function takeLoan() {
+  txReceipt = await ethLend.takeLoanOffer
+  console.log(txReceipt)
+}
+
 
 // setUp()
 
 // ##################### Get CDP id ##############
 
 // 1. Ask for users CDP ID
-function refinance() {
-  string = "######### Would you like to refinance your variable CDP for a fixed Interest Rate loan? (y/n) ####### "
-  // Prompt User for CDP number:
-  rl.question(string, (answer) => {
-    // TODO: Log the answer in a database
-    console.log(`Great, fetching the ETHLends ETH / DAI Loans...`);
-    rl.close();
-  });
-  return answer
-}
 
 function startProgram() {
-  console.log("########################################################")
-  console.log("-----------------WELCOME TO LEHMAN BROS-----------------")
-  console.log("     YOUR GO TO SERVICE FOR CRYPTO INTEREST RATE SWAPS")
-  console.log("########################################################")
 
+  console.log("########################################################")
+  console.log("-----------------WELCOME TO COLLATERALIZED-----------------")
+  console.log("     YOUR GO-TO SERVICE FOR CRYPTO INTEREST RATE SWAPS")
+  console.log("########################################################")
+  console.log("----------------Check your MakerCDP Status-----------------")
   console.log("")
-  console.log("-----------------Check your MakerCDP Status-----------------")
 
-  id = getCdpId();
+  rl.question("What is your CDP Number: ", function(answer) {
+    if (answer == '5293') {
+      showMakerInfo(answer)
+    }
+    else {
+      rl.setPrompt("Again")
+      rl.promp()
+    }
+  })
 
-  showMakerInfo(id)
+  //showMakerInfo(id)
 
-  refinance();
+  //refinance();
 
   //ethLend.getLoans
 
 }
 
+startProgram()

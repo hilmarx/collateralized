@@ -2,12 +2,12 @@
 const Marketplace = require('aave-js').Marketplace;
 const Web3 = require('web3');
 // const web3 = new Web3(new Web3.providers.HttpProvider(`https://kovan-node.ethlend.io/`));
-const web3 = new Web3(new Web3.providers.HttpProvider(`https://kovan.infura.io/v3/process.env.PRIVATE_KEY`));
+const web3 = new Web3(new Web3.providers.HttpProvider(`https://kovan.infura.io/v3/a7683f6dd9ed43d59d4331983529884f`));
 
 
 const Tx = require('ethereumjs-tx');
-const privateKey = Buffer.from('process.env.PRIVATE_KEY', 'hex')
-const privateKey2 = Buffer.from('process.env.PRIVATE_KEY', 'hex')
+const privateKey = Buffer.from('C00E04004B754A2D79B44897F817F56608A5AFFF9E10DAFDF61FFD0FA78EA7E0', 'hex')
+const privateKey2 = Buffer.from('06911B765087AF56AAB53E600006B2F2B9C6AF542F6F64145053398C8F26D384', 'hex')
 const borrowerAddress = "0x518eAa8f962246bCe2FA49329Fe998B66d67cbf8";
 const lenderAddress = "0xb779bEa600c94D0a2337A6A1ccd99ac1a8f08866"; 
 
@@ -365,7 +365,7 @@ async function takeLoanOffer() {
   };
 
   const takeLoanJSON = await marketplace.offers.takeLoanOffer(borrowerAddress,borrowerParams);
-  console.log(takeLoanJSON)
+  // console.log(takeLoanJSON)
 
   transactionCount = await getTxCount()
   
@@ -380,23 +380,28 @@ async function takeLoanOffer() {
   // console.log(rawTx3)
   
   // Create Tx
+  console.log("Create Loan acceptance Tx")
   const tx = new Tx(newtakeLoanJSON);
   // console.log(tx.gasLimit.toString())
+  console.log("✅");
 
   // Sign Tx
+  console.log("Sign Tx")
   tx.sign(privateKey);
   // console.log("tx3 signed")
+  console.log("✅");
 
   // Serialize Tx
   const serializedTx = tx.serialize()
 
   // Send signed Tx
-
+  console.log("Send Tx")
   txReceipt = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
   .catch(error => {
     console.log(error)
   })
-  console.log("✅");
+  console.log("Tx confirmed ✅")
+  return txReceipt
 }
 
 //###########################################################
@@ -546,11 +551,15 @@ async function fundRequest() {
   
 }
 
-// Exports
-module.exports = {
-  getLoans: getLoans()
+//takeLoanOffer()
+function initateFunding() {
+  fundRequest()
 }
 
+// Exports
+
+//createLoanRequest: createLoanRequest(),
+//placeCollateral: placeCollateral(),
 
 
 
@@ -571,7 +580,7 @@ module.exports = {
 // Plan A
 
 // 1. Create a Loan Offer
-createLoanOffer();
+//createLoanOffer();
 
 // 2. Get Loans
 //getLoans();
