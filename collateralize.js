@@ -7,15 +7,15 @@ require('dotenv').config()
 const Marketplace = require('aave-js').Marketplace;
 const Web3 = require('web3');
 
-const currentId = 5294
 
-// const web3 = new Web3(new Web3.providers.HttpProvider(`https://kovan-node.ethlend.io/`));
-const web3 = new Web3(new Web3.providers.HttpProvider(`https://kovan.infura.io/v3/a7683f6dd9ed43d59d4331983529884f`));
+const web3 = new Web3(new Web3.providers.HttpProvider(`https://kovan.infura.io/v3/process.env.INFURA_ID`));
 const Tx = require('ethereumjs-tx');
-const privateKey = Buffer.from('C00E04004B754A2D79B44897F817F56608A5AFFF9E10DAFDF61FFD0FA78EA7E0', 'hex')
-const privateKey2 = Buffer.from('06911B765087AF56AAB53E600006B2F2B9C6AF542F6F64145053398C8F26D384', 'hex')
-const borrowerAddress = "0x518eAa8f962246bCe2FA49329Fe998B66d67cbf8";
-const lenderAddress = "0xb779bEa600c94D0a2337A6A1ccd99ac1a8f08866"; 
+const privateKey = Buffer.from('process.env.privateKey', 'hex')
+const privateKey2 = Buffer.from('process.env.privateKey2', 'hex')
+let BORROWER;
+let LENDER;
+const borrowerAddress = BORROWER;
+const lenderAddress = LENDER; 
 
 async function getTxCount() {
   // Get tx count
@@ -577,7 +577,7 @@ async function setUp() {
 
   console.log(`-----------------`);
 
-  console.log(`Putting 0.25 ETH in CDP`);
+  console.log(`Putting 0.1 ETH in CDP`);
   await cdp.lockEth(0.1, ETH);
   console.log(`done locking eth`);
 
@@ -723,7 +723,7 @@ async function showEthlendLoans() {
   console.log(`-----------------`);
   console.log(``);
 
-  rl.question(`Would you like to refinance to a ${loan.mpr * 12}% p.a. loan? (y/n) `, async function(answer) {
+  rl.question(`Would you like to refinance to a 1.5% p.a. loan? (y/n) `, async function(answer) {
     if (answer == 'y') {
       console.log(`-----------------`);
       console.log(``);
@@ -772,7 +772,7 @@ function startProgram() {
   console.log("")
 
   rl.question("What is your CDP Number: ", function(answer) {
-    if (answer == '5294') {
+    if (answer == '5298') {
       showMakerInfo(answer)
     }
     else {
@@ -783,5 +783,5 @@ function startProgram() {
 
 }
 
-//startProgram()
+startProgram()
 //setUp()
